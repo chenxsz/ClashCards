@@ -1,0 +1,166 @@
+package com.clashcards.ui;
+
+import com.clashcards.core.Carta;
+import com.clashcards.core.Raridade;
+import com.clashcards.core.TipoDaCarta;
+
+import com.clashcards.data.GerenciadorCSV;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+
+public class PainelDeCadastro {
+    private TextField nome = new TextField();
+    private TextField nivel = new TextField();
+    private TextField elixir = new TextField();
+
+    private ComboBox<TipoDaCarta> tipo = new ComboBox<>();
+    private ComboBox<Raridade> raridade = new ComboBox<>();
+
+    private TextField vida = new TextField();
+    private TextField dano = new TextField();
+    private TextField danosPorSegundo = new TextField();
+    private TextField alvos = new TextField();
+    private TextField alcance = new TextField();
+    private TextField velocidade = new TextField();
+    private TextField velocidadeImpacto = new TextField();
+
+    private Button salvar = new Button("Salvar");
+    private Button imagem = new Button("Carregar imagem");
+    private Label caminhoDaImagem = new Label("Nenhuma imagem selecionada");
+    private GerenciadorCSV gerenciador;
+
+    public PainelDeCadastro(GerenciadorCSV gerenciador) {
+        this.gerenciador = gerenciador;
+    }
+
+    //organizar tudo em linha e coluna - como uma planilha
+    public VBox getPainel() {
+        GridPane formGrid = new GridPane();
+        formGrid.setHgap(10);
+        formGrid.setVgap(10);
+        formGrid.setPadding(new Insets(20));
+
+        formGrid.add(new Label("Nome:"), 0, 0);
+        formGrid.add(nome, 1, 0);
+
+        formGrid.add(new Label("Nível:"), 0, 1);
+        formGrid.add(nivel, 1, 1);
+        formGrid.add(new Label("Custo Elixir:"), 2, 1);
+        formGrid.add(elixir, 3, 1);
+
+        formGrid.add(new Label("Tipo:"), 0, 2);
+        tipo.getItems().setAll(TipoDaCarta.CONSTRUCAO.values());
+        formGrid.add(tipo, 1, 2);
+
+        formGrid.add(new Label("Raridade:"), 2, 2);
+        raridade.getItems().setAll(Raridade.values());
+        formGrid.add(raridade, 3, 2);
+
+        formGrid.add(new Label("Pontos de Vida:"), 0, 3);
+        formGrid.add(vida, 1, 3);
+        formGrid.add(new Label("Dano:"), 2, 3);
+        formGrid.add(dano, 3, 3);
+
+        formGrid.add(imagem, 0, 4);
+        formGrid.add(caminhoDaImagem, 1, 4);
+
+        imagem.setOnAction(e -> selecionarImagem());
+        salvar.setOnAction(e -> salvarCarta());
+
+        VBox painelPrincipal = new VBox(formGrid, salvar);
+        painelPrincipal.setPadding(new Insets(10));
+        painelPrincipal.setSpacing(10);
+
+        return painelPrincipal;
+    }
+
+    private void selecionarImagem() {
+        FileChooser seletor = new FileChooser();
+        seletor.setTitle("Selecionar Imagem da Carta");
+        seletor.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Imagens", "*.png", "*.jpg", "*.jpeg")
+        );
+
+        java.io.File arquivoSelecionado = seletor.showOpenDialog(null);
+
+        if (arquivoSelecionado != null) {
+            String caminho = arquivoSelecionado.toURI().toString();
+            caminhoDaImagem.setText(caminho);
+            System.out.println("Imagem selecionada: " + caminho);
+        }
+    }
+
+    private void salvarCarta() {
+        System.out.println("Salvando carta...");
+
+        try {
+            String nome = this.nome.getText().trim();
+            int nivel = Integer.parseInt(this.nivel.getText().trim());
+            int elixir = Integer.parseInt(this.elixir.getText().trim());
+            TipoDaCarta tipo = this.tipo.getValue();
+            Raridade raridade = this.raridade.getValue();
+            String imagem = caminhoDaImagem.getText();
+            int dano = Integer.parseInt(this.dano.getText().trim());
+            double dps = Double.parseDouble(this.danosPorSegundo.getText().trim());
+            int vida = Integer.parseInt(this.vida.getText().trim());
+            String alcance = this.alcance.getText().trim();
+            String velocidade = this.velocidade.getText().trim();
+            String velImpacto = this.velocidadeImpacto.getText().trim();
+
+            if (nome.isEmpty() || tipo == null || raridade == null || imagem.equals("Nenhuma imagem selecionada.")) {
+                mostrarAlertaErro("Campos obrigatórios (Nome, Tipo, Raridade, Imagem) não podem estar vazios.");
+                return;
+            }
+
+            Carta novaCarta = new Carta(nome, nivel, tipo, raridade, imagem, elixir, vida,
+                    dano, dps,
+                    this.alvos.getText().trim(),
+                    this.alcance.getText().trim(),
+                    this.velocidade.getText().trim(),
+                    this.velocidadeImpacto.getText().trim());
+            
+            boolean salvou = gerenciador.salvarNovaCarta(novaCarta);
+
+        } catch (NumberFormatException e) {
+            mostrarAlertaErro("Erro de Formato: Campos numéricos (Nível, Elixir, Vida, etc.) devem conter apenas números.");
+        } catch (Exception e) {
+            mostrarAlertaErro("Ocorreu um erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void limparCampos() {
+        nome.clear();
+        nivel.clear();
+        elixir.clear();
+        tipo.setValue(null);
+        raridade.setValue(null);
+        vida.clear();
+        dano.clear();
+        danosPorSegundo.clear();
+        alvos.clear();
+        alcance.clear();
+        velocidade.clear();
+        velocidadeImpacto.clear();
+        caminhoDaImagem.setText("Nenhuma imagem selecionada.");
+    }
+
+    private void mostrarAlertaErro(String mensagem) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle("Erro no Cadastro");
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensagem);
+        alerta.showAndWait();
+    }
+
+    private void mostrarAlertaInfo(String titulo, String mensagem) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensagem);
+        alerta.showAndWait();
+    }
+}
