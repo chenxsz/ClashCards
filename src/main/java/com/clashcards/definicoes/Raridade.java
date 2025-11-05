@@ -1,4 +1,4 @@
-package com.clashcards.core;
+package com.clashcards.definicoes;
 
 public enum Raridade {
     COMUM,

@@ -1,4 +1,4 @@
-package com.clashcards.ui;
+package com.clashcards.paineis;
 
 import com.clashcards.data.GerenciadorCSV;
 import javafx.application.Application;
@@ -18,15 +18,18 @@ public class App extends Application {
         primaryStage.setTitle("Clash Cards - Gerenciador de Decks");
         TabPane painelDeAbas = new TabPane();
 
-        PainelDeCadastro cadastro = new PainelDeCadastro(gerenciadorCSV);
-        VBox formulario = cadastro.getPainel();
-
-        Tab abaDeCartas = new Tab("Cartas - Cadastro");
+        PainelDeColecao colecao = new PainelDeColecao(gerenciadorCSV);
+        VBox colecaoTabela = colecao.getPainel();
         Tab abaDeColecao = new Tab("Coleção");
+        abaDeColecao.setContent(colecaoTabela);
+
+        PainelDeCadastro cadastro = new PainelDeCadastro(gerenciadorCSV, colecao);
+        VBox formulario = cadastro.getPainel();
+        Tab abaDeCartas = new Tab("Cartas - Cadastro");
+        abaDeCartas.setContent(formulario);
+
         Tab abaDeDecks = new Tab("Decks");
 
-        abaDeCartas.setContent(formulario);
-        abaDeColecao.setContent(new BorderPane(new Label("VISUALIZAR todas as cartas salvas.")));
         abaDeDecks.setContent(new BorderPane(new Label("CRIAR/EDITAR decks.")));
 
         abaDeCartas.setClosable(false);

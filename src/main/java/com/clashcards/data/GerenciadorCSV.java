@@ -1,8 +1,8 @@
 package com.clashcards.data;
 
-import com.clashcards.core.Carta;
-import com.clashcards.core.Raridade;
-import com.clashcards.core.TipoDaCarta;
+import com.clashcards.definicoes.Carta;
+import com.clashcards.definicoes.Raridade;
+import com.clashcards.definicoes.TipoDaCarta;
 
 import java.io.*;
 import java.util.ArrayList;

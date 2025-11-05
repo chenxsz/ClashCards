@@ -1,12 +1,15 @@
-package com.clashcards.ui;
+package com.clashcards.paineis;
 
-import com.clashcards.core.Carta;
-import com.clashcards.core.Raridade;
-import com.clashcards.core.TipoDaCarta;
+import com.clashcards.definicoes.Carta;
+import com.clashcards.definicoes.Raridade;
+import com.clashcards.definicoes.TipoDaCarta;
 
 import com.clashcards.data.GerenciadorCSV;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -31,9 +34,11 @@ public class PainelDeCadastro {
     private Button imagem = new Button("Carregar imagem");
     private Label caminhoDaImagem = new Label("Nenhuma imagem selecionada");
     private GerenciadorCSV gerenciador;
+    private  PainelDeColecao colecao;
 
-    public PainelDeCadastro(GerenciadorCSV gerenciador) {
+    public PainelDeCadastro(GerenciadorCSV gerenciador, PainelDeColecao colecao) {
         this.gerenciador = gerenciador;
+        this.colecao = colecao;
     }
 
     //organizar tudo em linha e coluna - como uma planilha
@@ -111,7 +116,7 @@ public class PainelDeCadastro {
             String velImpacto = this.velocidadeImpacto.getText().trim();
 
             if (nome.isEmpty() || tipo == null || raridade == null || imagem.equals("Nenhuma imagem selecionada.")) {
-                mostrarAlertaErro("Campos obrigatórios (Nome, Tipo, Raridade, Imagem) não podem estar vazios.");
+                mostrarAlertaErro("Campos obrigatórios (Nome, Tipo, Raridade, Imagem) não podem estar vazios!");
                 return;
             }
 
@@ -123,6 +128,17 @@ public class PainelDeCadastro {
                     this.velocidadeImpacto.getText().trim());
             
             boolean salvou = gerenciador.salvarNovaCarta(novaCarta);
+
+            if (salvou) {
+                mostrarAlertaInfo("Sucesso!", "Carta salva com sucesso no arquivo 'cartas.svc'.");
+                limparCampos();
+
+                if (colecao != null) {
+                    colecao.carregarDados();
+                }
+            } else {
+                mostrarAlertaErro("Uma carta com este nome já existe!");
+            }
 
         } catch (NumberFormatException e) {
             mostrarAlertaErro("Erro de Formato: Campos numéricos (Nível, Elixir, Vida, etc.) devem conter apenas números.");

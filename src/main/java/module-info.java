@@ -1,10 +1,11 @@
 module ClashCards {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
-    opens com.clashcards.ui to javafx.fxml;
-    opens com.clashcards.core to javafx.fxml;
+    opens com.clashcards.paineis to javafx.fxml;
+    opens com.clashcards.definicoes to javafx.fxml;
 
-    exports com.clashcards.ui;
-    exports com.clashcards.core;
+    exports com.clashcards.paineis;
+    exports com.clashcards.definicoes;
 }
