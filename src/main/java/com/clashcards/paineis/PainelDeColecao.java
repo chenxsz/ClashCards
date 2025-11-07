@@ -2,24 +2,92 @@ package com.clashcards.paineis;
 
 import com.clashcards.definicoes.Carta;
 import com.clashcards.data.GerenciadorCSV;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class PainelDeColecao {
     private GerenciadorCSV gerenciador;
     private TableView<Carta> cartas;
+    private PainelDeCadastro painelCadastro;
 
-    public PainelDeColecao(GerenciadorCSV gerenciador) {
+    private Button excluir = new Button("Excluir carta");
+    private Button editar = new Button("Editar carta");
+
+    private void mostrarAlertaErro(String titulo, String mensagem) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensagem);
+        alerta.showAndWait();
+    }
+
+    private void mostrarAlertaInfo(String titulo, String mensagem) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensagem);
+        alerta.showAndWait();
+    }
+
+    public PainelDeColecao(GerenciadorCSV gerenciador, PainelDeCadastro painelCadastro) {
         this.gerenciador = gerenciador;
+        this.painelCadastro = painelCadastro;
         this.cartas = new TableView<>();
 
         colunasTabela();
         carregarDados();
+
+        excluir.setOnAction(e -> excluirCarta());
+        editar.setOnAction(e -> editarCarta());
+    }
+
+    public void setPainelCadastro(PainelDeCadastro painelCadastro) {
+        this.painelCadastro = painelCadastro;
+    }
+
+    private void excluirCarta() {
+        Carta selecionada = cartas.getSelectionModel().getSelectedItem();
+
+        if (selecionada == null) {
+            mostrarAlertaErro("Selecione uma carta", "Por favor, selecione uma carta para exluir.");
+            return;
+        }
+
+        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacao.setTitle("Confirmação de exclusão");
+        confirmacao.setHeaderText("Tem certeza que deseja excluir a carta " + selecionada.getNome() + "?");
+        confirmacao.setContentText("Essa ação é permanente e removerá a carta do arquivo");
+
+        Optional<ButtonType> resultado = confirmacao.showAndWait();
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            boolean sucesso = gerenciador.removerCarta(selecionada);
+
+            if (sucesso) {
+                cartas.getItems().remove(selecionada);
+                mostrarAlertaInfo("Sucesso!", "A carta foi excluída com sucesso.");
+            } else {
+                mostrarAlertaErro("Erro!", "Não foi possível exluir a carta. Tente novamente.");
+            }
+        }
+    }
+
+    private void editarCarta() {
+        Carta selecionada = cartas.getSelectionModel().getSelectedItem();
+
+        if (selecionada == null) {
+            mostrarAlertaErro("Selecione uma carta", "Por favor, selecione uma carta para editar.");
+            return;
+        }
+
+        painelCadastro.carregarDadosParaEdicao(selecionada);
+
+        mostrarAlertaInfo("Carregamento concluído", "Os dados da carta '" + selecionada.getNome() + "' foram carregados na aba 'Cartas - Cadastro'. Vá até lá para editar.");
     }
 
     private void colunasTabela() {
@@ -61,8 +129,10 @@ public class PainelDeColecao {
     }
 
     public VBox getPainel() {
-        VBox painelPrincipal = new VBox(cartas);
-        painelPrincipal.setSpacing(5);
+        HBox containerBotoes = new HBox(10, editar, excluir);
+        containerBotoes.setPadding(new Insets(10, 0, 0, 0));
+
+        VBox painelPrincipal = new VBox(5, cartas, containerBotoes);
 
         VBox.setVgrow(cartas, javafx.scene.layout.Priority.ALWAYS);
 

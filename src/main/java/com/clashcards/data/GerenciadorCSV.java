@@ -114,8 +114,68 @@ public class GerenciadorCSV {
         }
     }
 
-
     public ArrayList<Carta> getCartasEmMemoria() {
         return cartasEmMemoria;
     }
+
+    private boolean reescreverArquivoCSV() {
+        try (FileWriter fw = new FileWriter(NOME_ARQUIVO, false);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            for (Carta c : cartasEmMemoria) {
+                out.println(formatarParaCSV(c));
+            }
+            return true;
+        } catch (IOException e) {
+            System.out.println("Erro ao reescrever o arquivo CSV!");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean removerCarta(Carta removerCarta) {
+        if (cartasEmMemoria.removeIf(c -> c.getNome().equalsIgnoreCase(removerCarta.getNome()))) {
+            if (reescreverArquivoCSV()) {
+                return true;
+            } else {
+                System.out.println("ERRO GRAVE: Falha ao reescrever CSV após a remoção!");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Carta lerDoCSV(String linha) {
+        String[] partes = linha.split(";");
+        // Valide o número de campos: DEVE SER 12!
+        if (partes.length < 12) {
+            System.err.println("Erro: Linha CSV incompleta (esperado 12 campos): " + linha);
+            return null;
+        }
+
+        try {
+            String nome = partes[0];
+            int nivel = Integer.parseInt(partes[1]); // NÍVEL
+            int elixir = Integer.parseInt(partes[2]);
+            TipoDaCarta tipo = TipoDaCarta.valueOf(partes[3]);
+            Raridade raridade = Raridade.valueOf(partes[4]);
+            String caminhoImagem = partes[5]; // CAMINHO DA IMAGEM
+            int vida = Integer.parseInt(partes[6]);
+            int dano = Integer.parseInt(partes[7]);
+            double dps = Double.parseDouble(partes[8]); // DPS
+            String alvos = partes[9]; // ALVOS
+            String alcance = partes[10]; // ALCANCE
+            String velocidade = partes[11]; // VELOCIDADE
+            String velocidadeImpacto = partes[12]; // VELOCIDADE IMPACTO
+
+            return new Carta(nome, nivel, tipo, raridade, caminhoImagem, elixir,
+                    vida, dano, dps, alvos, alcance, velocidade, velocidadeImpacto);
+
+        } catch (Exception e) {
+            System.err.println("Erro ao converter linha CSV: " + linha + " - Detalhe: " + e.getMessage());
+            return null;
+        }
+    }
+
+
 }

@@ -36,9 +36,17 @@ public class PainelDeCadastro {
     private GerenciadorCSV gerenciador;
     private  PainelDeColecao colecao;
 
+    PainelDeCadastro painelCadastro;
+
+    private boolean estaEmModoEdicao = false;
+    private Carta cartaSendoEditada = null;
+    private String textoOriginalBotao;
+
     public PainelDeCadastro(GerenciadorCSV gerenciador, PainelDeColecao colecao) {
         this.gerenciador = gerenciador;
         this.colecao = colecao;
+
+        textoOriginalBotao = salvar.getText();
     }
 
     //organizar tudo em linha e coluna - como uma planilha
@@ -53,11 +61,12 @@ public class PainelDeCadastro {
 
         formGrid.add(new Label("Nível:"), 0, 1);
         formGrid.add(nivel, 1, 1);
+
         formGrid.add(new Label("Custo Elixir:"), 2, 1);
         formGrid.add(elixir, 3, 1);
 
         formGrid.add(new Label("Tipo:"), 0, 2);
-        tipo.getItems().setAll(TipoDaCarta.CONSTRUCAO.values());
+        tipo.getItems().setAll(TipoDaCarta.values());
         formGrid.add(tipo, 1, 2);
 
         formGrid.add(new Label("Raridade:"), 2, 2);
@@ -66,11 +75,27 @@ public class PainelDeCadastro {
 
         formGrid.add(new Label("Pontos de Vida:"), 0, 3);
         formGrid.add(vida, 1, 3);
+
         formGrid.add(new Label("Dano:"), 2, 3);
         formGrid.add(dano, 3, 3);
 
-        formGrid.add(imagem, 0, 4);
-        formGrid.add(caminhoDaImagem, 1, 4);
+        formGrid.add(new Label("DPS:"), 0, 4);
+        formGrid.add(danosPorSegundo, 1, 4);
+
+        formGrid.add(new Label("Alvos:"), 2, 4);
+        formGrid.add(alvos, 3, 4);
+
+        formGrid.add(new Label("Alcance:"), 0, 5);
+        formGrid.add(alcance, 1, 5);
+
+        formGrid.add(new Label("Velocidade:"), 2, 5);
+        formGrid.add(velocidade, 3, 5);
+
+        formGrid.add(new Label("Vel. Impacto:"), 0, 6);
+        formGrid.add(velocidadeImpacto, 1, 6);
+
+        formGrid.add(imagem, 0, 7);
+        formGrid.add(caminhoDaImagem, 1, 7);
 
         imagem.setOnAction(e -> selecionarImagem());
         salvar.setOnAction(e -> salvarCarta());
@@ -98,7 +123,70 @@ public class PainelDeCadastro {
         }
     }
 
+    private Carta construirCartaAposEdicao() {
+        try {
+            String nome = this.nome.getText().trim();
+            int nivel = Integer.parseInt(this.nivel.getText().trim());
+            int elixir = Integer.parseInt(this.elixir.getText().trim());
+            TipoDaCarta tipo = this.tipo.getValue();
+            Raridade raridade = this.raridade.getValue();
+            String imagem = caminhoDaImagem.getText();
+            int dano = Integer.parseInt(this.dano.getText().trim());
+            double dps = Double.parseDouble(this.danosPorSegundo.getText().trim());
+            int vida = Integer.parseInt(this.vida.getText().trim());
+
+            if (nome.isEmpty() || tipo == null || raridade == null) {
+                mostrarAlertaErro("Os campos obrigatórios (Nome, Tipo, Raridade) não podem estar vazios!");
+                return null;
+            }
+
+            return new Carta(nome, nivel, tipo, raridade, imagem, elixir, vida,
+                    dano, dps,
+                    this.alvos.getText().trim(),
+                    this.alcance.getText().trim(),
+                    this.velocidade.getText().trim(),
+                    this.velocidadeImpacto.getText().trim());
+
+        } catch (NumberFormatException e) {
+            mostrarAlertaErro("Erro de Formato: Campos numéricos (Nível, Elixir, Vida, etc.) devem conter apenas números.");
+            return null;
+        } catch (Exception e) {
+            mostrarAlertaErro("Ocorreu um erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void tratarEdicao() {
+        Carta novaCarta = construirCartaAposEdicao();
+
+        if (novaCarta == null) {
+            return;
+        }
+
+        boolean sucessoRemocao = gerenciador.removerCarta(cartaSendoEditada);
+        boolean sucessoAdicao = gerenciador.salvarNovaCarta(novaCarta);
+
+        if (sucessoRemocao && sucessoAdicao) {
+            limparCampos();
+            nome.setDisable(false);
+            salvar.setText(textoOriginalBotao);
+            this.estaEmModoEdicao = false;
+            this.cartaSendoEditada = null;
+
+            colecao.carregarDados();
+            mostrarAlertaInfo("Edição Concluída", "A carta '" + novaCarta.getNome() + "' foi salva com sucesso!");
+        } else {
+            mostrarAlertaErro("Houve um problema ao salvar as alterações. Tente novamente.");
+        }
+    }
+
     private void salvarCarta() {
+        if (estaEmModoEdicao) {
+            tratarEdicao();
+            return;
+        }
+
         System.out.println("Salvando carta...");
 
         try {
@@ -163,6 +251,30 @@ public class PainelDeCadastro {
         velocidadeImpacto.clear();
         caminhoDaImagem.setText("Nenhuma imagem selecionada.");
     }
+
+    public void carregarDadosParaEdicao(Carta carta) {
+        nome.setText(carta.getNome());
+        nivel.setText(String.valueOf(carta.getNivel()));
+        elixir.setText(String.valueOf(carta.getElixir()));
+        tipo.setValue(carta.getTipo());
+        raridade.setValue(carta.getRaridade());
+        vida.setText(String.valueOf(carta.getVida()));
+        dano.setText(String.valueOf(carta.getDano()));
+        danosPorSegundo.setText(String.valueOf(carta.getDanoPorSegundo()));
+        alvos.setText(carta.getAlvos());
+        alcance.setText(carta.getAlcance());
+        velocidade.setText(carta.getVelocidade());
+        velocidadeImpacto.setText(String.valueOf(carta.getVelocidadeDeImpacto()));
+
+        nome.setDisable(true);
+
+        this.cartaSendoEditada = carta;
+        this.estaEmModoEdicao = true;
+        salvar.setText("Salvar Edição");
+
+        mostrarAlertaInfo("Modo Edição de carta", "Edite as propriedades e clique em 'Salvar Edição'.");
+    }
+
 
     private void mostrarAlertaErro(String mensagem) {
         Alert alerta = new Alert(Alert.AlertType.ERROR);

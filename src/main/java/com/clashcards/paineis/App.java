@@ -18,18 +18,21 @@ public class App extends Application {
         primaryStage.setTitle("Clash Cards - Gerenciador de Decks");
         TabPane painelDeAbas = new TabPane();
 
-        PainelDeColecao colecao = new PainelDeColecao(gerenciadorCSV);
+        PainelDeColecao colecao = new PainelDeColecao(gerenciadorCSV, null);
         VBox colecaoTabela = colecao.getPainel();
-        Tab abaDeColecao = new Tab("Coleção");
-        abaDeColecao.setContent(colecaoTabela);
 
         PainelDeCadastro cadastro = new PainelDeCadastro(gerenciadorCSV, colecao);
         VBox formulario = cadastro.getPainel();
+
+        colecao.setPainelCadastro(cadastro);
+
         Tab abaDeCartas = new Tab("Cartas - Cadastro");
         abaDeCartas.setContent(formulario);
 
-        Tab abaDeDecks = new Tab("Decks");
+        Tab abaDeColecao = new Tab("Coleção");
+        abaDeColecao.setContent(colecaoTabela);
 
+        Tab abaDeDecks = new Tab("Decks");
         abaDeDecks.setContent(new BorderPane(new Label("CRIAR/EDITAR decks.")));
 
         abaDeCartas.setClosable(false);
