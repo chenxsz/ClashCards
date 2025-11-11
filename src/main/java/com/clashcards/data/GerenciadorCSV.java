@@ -35,12 +35,12 @@ public class GerenciadorCSV {
             String linhaCSV = formatarParaCSV(novaCarta);
             out.println(linhaCSV);
 
-            return true; // Sucesso
+            return true;
 
         } catch (IOException e) {
             System.err.println("Erro ao salvar a carta no arquivo CSV!");
             e.printStackTrace();
-            // Se deu erro ao salvar no arquivo, remove da memória também
+            //se deu erro ao salvar no arquivo, remove da memória também
             this.cartasEmMemoria.remove(novaCarta);
             return false;
         }
@@ -147,7 +147,6 @@ public class GerenciadorCSV {
 
     private Carta lerDoCSV(String linha) {
         String[] partes = linha.split(";");
-        // Valide o número de campos: DEVE SER 12!
         if (partes.length < 12) {
             System.err.println("Erro: Linha CSV incompleta (esperado 12 campos): " + linha);
             return null;
@@ -155,18 +154,18 @@ public class GerenciadorCSV {
 
         try {
             String nome = partes[0];
-            int nivel = Integer.parseInt(partes[1]); // NÍVEL
+            int nivel = Integer.parseInt(partes[1]);
             int elixir = Integer.parseInt(partes[2]);
             TipoDaCarta tipo = TipoDaCarta.valueOf(partes[3]);
             Raridade raridade = Raridade.valueOf(partes[4]);
-            String caminhoImagem = partes[5]; // CAMINHO DA IMAGEM
+            String caminhoImagem = partes[5];
             int vida = Integer.parseInt(partes[6]);
             int dano = Integer.parseInt(partes[7]);
-            double dps = Double.parseDouble(partes[8]); // DPS
-            String alvos = partes[9]; // ALVOS
-            String alcance = partes[10]; // ALCANCE
-            String velocidade = partes[11]; // VELOCIDADE
-            String velocidadeImpacto = partes[12]; // VELOCIDADE IMPACTO
+            double dps = Double.parseDouble(partes[8]);
+            String alvos = partes[9];
+            String alcance = partes[10];
+            String velocidade = partes[11];
+            String velocidadeImpacto = partes[12];
 
             return new Carta(nome, nivel, tipo, raridade, caminhoImagem, elixir,
                     vida, dano, dps, alvos, alcance, velocidade, velocidadeImpacto);
