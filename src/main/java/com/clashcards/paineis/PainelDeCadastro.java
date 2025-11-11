@@ -123,7 +123,7 @@ public class PainelDeCadastro {
         }
     }
 
-    private Carta construirCartaAposEdicao() {
+    private Carta cartaAposEdicao() {
         try {
             String nome = this.nome.getText().trim();
             int nivel = Integer.parseInt(this.nivel.getText().trim());
@@ -158,7 +158,7 @@ public class PainelDeCadastro {
     }
 
     private void tratarEdicao() {
-        Carta novaCarta = construirCartaAposEdicao();
+        Carta novaCarta = cartaAposEdicao();
 
         if (novaCarta == null) {
             return;
