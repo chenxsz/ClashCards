@@ -1,0 +1,203 @@
+.root {
+    -fx-background-color: #2c3e50;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 14px;
+}
+
+.label {
+    -fx-text-fill: #ecf0f1;
+}
+
+.titulo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1c40f;
+}
+
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 8 15 8 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.button:pressed {
+    -fx-background-color: #1abc9c;
+    -fx-effect: innerShadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 2);
+}
+
+.botao-verde {
+    -fx-background-color: #2ecc71;
+}
+.botao-verde:hover { -fx-background-color: #27ae60; }
+
+.botao-vermelho {
+    -fx-background-color: #e74c3c;
+}
+.botao-vermelho:hover { -fx-background-color: #c0392b; }
+
+.combo-box-base {
+    -fx-text-fill: white;
+}
+
+.combo-box-base > .text-field {
+    -fx-text-fill: white;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #ecf0f1;
+}
+
+.combo-box-popup {
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-text-fill: #34495e;
+    -fx-font-weight: bold;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.text-field, .combo-box {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #7f8c8d;
+    -fx-border-radius: 5;
+}
+
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #f1c40f;
+    -fx-background-color: #3e5871;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-base: #2c3e50;
+    -fx-control-inner-background: #2c3e50;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #2980b9;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #34495e;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #f1c40f;
+    -fx-text-fill: black;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #1a252f;
+}
+
+.tab {
+    -fx-background-color: #34495e;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.tab:selected {
+    -fx-background-color: #3498db;
+}
+
+.tab .tab-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* css das cartas */
+.card-base {
+    /* Define o tamanho padrão da carta */
+    -fx-pref-width: 150px;
+    -fx-pref-height: 200px;
+
+    /* Preenchimento interno e cantos arredondados */
+    -fx-padding: 5px;
+    -fx-border-radius: 8px;
+
+    /* Sombra para dar profundidade */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 8, 0.4, 0, 2);
+
+    /* Garante que o conteúdo fique centralizado no topo */
+    -fx-alignment: top-center;
+
+    /* Fundo da carta */
+    -fx-background-color: #2c2c2c;
+
+    -fx-margin: 10px;
+}
+
+/* Comum (Cinza/Branco) */
+.raridade-comum {
+    -fx-border-color: #a0a0a0; /* Cinza claro */
+    -fx-border-width: 3px;
+}
+
+/* Rara (Azul) */
+.raridade-rara {
+    -fx-border-color: #4a90e2; /* Azul vibrante */
+    -fx-border-width: 3px;
+}
+
+/* Épica (Roxo) */
+.raridade-épica {
+    -fx-border-color: #9013fe; /* Roxo épico */
+    -fx-border-width: 4px;
+}
+
+/* Lendária (Dourado) */
+.raridade-lendária {
+    -fx-border-color: gold;
+    -fx-border-width: 5px;
+}
+
+.ilustracao-carta {
+    -fx-fit-width: 130px;
+    -fx-fit-height: 120px;
+    -fx-background-color: #404040;
+    -fx-border-radius: 5px;
+    -fx-padding: 3px;
+}
+
+.elixir-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: #f5b041;
+    -fx-border-radius: 50%;
+    -fx-padding: 3px 6px;
+    -fx-translate-y: 10px;
+}
+
+.nome-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: #1a1a1a;
+    -fx-padding: 3px;
+    -fx-pref-width: 100%;
+    -fx-alignment: center;
+}

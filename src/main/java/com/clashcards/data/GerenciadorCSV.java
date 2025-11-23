@@ -6,11 +6,17 @@ import com.clashcards.definicoes.TipoDaCarta;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GerenciadorCSV {
 
-    private static final String NOME_ARQUIVO = "cartas.csv";
+    public static final String NOME_ARQUIVO = "cartas.csv";
+    public static final String ARQUIVO_DECKS = "decks.csv";
     private ArrayList<Carta> cartasEmMemoria;
+// ...
 
     public GerenciadorCSV() {
         this.cartasEmMemoria = new ArrayList<>();
@@ -176,5 +182,66 @@ public class GerenciadorCSV {
         }
     }
 
+    public String getDiretorioBase() {
+        String caminhoCompleto = new java.io.File(NOME_ARQUIVO).getAbsolutePath();
+
+        return Paths.get(NOME_ARQUIVO).toAbsolutePath().getParent().toString();
+    }
+
+    public boolean salvarDeck(String nomeDeck, List<Carta> cartas) {
+        if (cartas.size() != 8) return false; // Deve ser 8
+
+        StringBuilder linhaCSV = new StringBuilder(nomeDeck);
+        for (Carta carta : cartas) {
+            linhaCSV.append(";").append(carta.getNome());
+        }
+
+        try (FileWriter fw = new FileWriter(ARQUIVO_DECKS, true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw))
+        {
+            out.println(linhaCSV.toString());
+            return true;
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar o deck no arquivo CSV!");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Map<String, List<String>> carregarDecksSalvos() {
+        Map<String, List<String>> decksSalvos = new HashMap<>();
+
+        File arquivoDecks = new File(ARQUIVO_DECKS);
+        if (!arquivoDecks.exists()) {
+            System.out.println("Arquivo de Decks não encontrado. Iniciando com 0 decks.");
+            return decksSalvos;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(ARQUIVO_DECKS))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] partes = linha.split(";");
+
+                if (partes.length == 9) { // 1 nome do deck + 8 nomes de cartas
+                    String nomeDeck = partes[0];
+                    List<String> nomesCartas = new ArrayList<>();
+
+                    // Adiciona os 8 nomes de cartas (começando do índice 1)
+                    for (int i = 1; i < partes.length; i++) {
+                        nomesCartas.add(partes[i]);
+                    }
+                    decksSalvos.put(nomeDeck, nomesCartas);
+                } else {
+                    System.err.println("Linha inválida no decks.csv: " + linha);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao ler o arquivo de decks: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return decksSalvos;
+    }
 
 }

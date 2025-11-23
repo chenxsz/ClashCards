@@ -26,6 +26,9 @@ public class App extends Application {
 
         colecao.setPainelCadastro(cadastro);
 
+        PainelDeDeck deckManager = new PainelDeDeck(gerenciadorCSV);
+        BorderPane visualDoDeck = deckManager.getPainel();
+
         Tab abaDeCartas = new Tab("Cartas - Cadastro");
         abaDeCartas.setContent(formulario);
 
@@ -33,15 +36,28 @@ public class App extends Application {
         abaDeColecao.setContent(colecaoTabela);
 
         Tab abaDeDecks = new Tab("Decks");
-        abaDeDecks.setContent(new BorderPane(new Label("CRIAR/EDITAR decks.")));
+        abaDeDecks.setContent(visualDoDeck);
 
         abaDeCartas.setClosable(false);
         abaDeColecao.setClosable(false);
         abaDeDecks.setClosable(false);
 
         painelDeAbas.getTabs().addAll(abaDeCartas, abaDeColecao, abaDeDecks);
+        painelDeAbas.getSelectionModel().selectedItemProperty().addListener((observable,oldTab, newTab) -> {
+            if (newTab == abaDeDecks) {
+                deckManager.recarregarDados();
+            }
+        });
 
-        Scene cenaPrincipal = new Scene(painelDeAbas, 800, 600);
+        Scene cenaPrincipal = new Scene(painelDeAbas, 900, 600);
+        java.net.URL cssUrl = getClass().getResource("/css/estilos.css");
+
+        if (cssUrl != null) {
+            cenaPrincipal.getStylesheets().add(cssUrl.toExternalForm());
+        }
+
+        primaryStage.setMaximized(true);
+
         primaryStage.setScene(cenaPrincipal);
         primaryStage.show();
     }

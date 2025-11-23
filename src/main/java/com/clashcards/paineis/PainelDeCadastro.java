@@ -11,8 +11,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
+import static com.clashcards.data.GerenciadorCSV.NOME_ARQUIVO;
+import static java.awt.SystemColor.window;
 
 public class PainelDeCadastro {
     private TextField nome = new TextField();
@@ -35,6 +44,8 @@ public class PainelDeCadastro {
     private Label caminhoDaImagem = new Label("Nenhuma imagem selecionada");
     private GerenciadorCSV gerenciador;
     private  PainelDeColecao colecao;
+
+    private String imagemPath;
 
     PainelDeCadastro painelCadastro;
 
@@ -117,9 +128,33 @@ public class PainelDeCadastro {
         java.io.File arquivoSelecionado = seletor.showOpenDialog(null);
 
         if (arquivoSelecionado != null) {
-            String caminho = arquivoSelecionado.toURI().toString();
-            caminhoDaImagem.setText(caminho);
-            System.out.println("Imagem selecionada: " + caminho);
+            String nomeDoArquivo = arquivoSelecionado.getName();
+            final String PASTA_DESTINO_RELATIVA = "imagens_cartas";
+            java.io.File pastaDestino = new java.io.File(PASTA_DESTINO_RELATIVA);
+
+            if (!pastaDestino.exists()) {
+                pastaDestino.mkdirs();
+            }
+            java.io.File arquivoDestino = new java.io.File(pastaDestino, nomeDoArquivo);
+
+            try {
+                Files.copy(
+                        arquivoSelecionado.toPath(),
+                        arquivoDestino.toPath(),
+                        StandardCopyOption.REPLACE_EXISTING // Substitui se já existir
+                );
+                this.imagemPath = PASTA_DESTINO_RELATIVA + "/" + nomeDoArquivo;
+                caminhoDaImagem.setText(nomeDoArquivo + " copiada.");
+
+                System.out.println("Imagem copiada com sucesso para: " + this.imagemPath);
+
+            } catch (IOException e) {
+                System.err.println("Erro ao copiar imagem para pasta do projeto: " + e.getMessage());
+                caminhoDaImagem.setText("ERRO: Falha na cópia do arquivo.");
+            }
+
+        } else {
+            caminhoDaImagem.setText("Nenhuma imagem selecionada");
         }
     }
 
@@ -214,7 +249,7 @@ public class PainelDeCadastro {
                     this.alcance.getText().trim(),
                     this.velocidade.getText().trim(),
                     this.velocidadeImpacto.getText().trim());
-            
+
             boolean salvou = gerenciador.salvarNovaCarta(novaCarta);
 
             if (salvou) {
@@ -275,6 +310,9 @@ public class PainelDeCadastro {
         mostrarAlertaInfo("Modo Edição de carta", "Edite as propriedades e clique em 'Salvar Edição'.");
     }
 
+    public String getDiretorioBase() {
+        return new java.io.File(NOME_ARQUIVO).getAbsolutePath().replace(NOME_ARQUIVO, "");
+    }
 
     private void mostrarAlertaErro(String mensagem) {
         Alert alerta = new Alert(Alert.AlertType.ERROR);

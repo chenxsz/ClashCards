@@ -3,9 +3,11 @@ package com.clashcards.paineis;
 import com.clashcards.definicoes.Carta;
 import com.clashcards.data.GerenciadorCSV;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -55,7 +57,7 @@ public class PainelDeColecao {
         Carta selecionada = cartas.getSelectionModel().getSelectedItem();
 
         if (selecionada == null) {
-            mostrarAlertaErro("Selecione uma carta", "Por favor, selecione uma carta para exluir.");
+            mostrarAlertaErro("Selecione uma carta", "Por favor, selecione uma carta para excluir.");
             return;
         }
 
@@ -125,16 +127,27 @@ public class PainelDeColecao {
 
         cartas.getItems().clear();
         cartas.getItems().addAll(lista);
-        System.out.println("Coleção atualizada: " + lista.size() + "cartas.");
+        System.out.println("Coleção atualizada: " + lista.size() + " cartas.");
     }
+
+    // PainelDeColecao.java
 
     public VBox getPainel() {
         HBox containerBotoes = new HBox(10, editar, excluir);
         containerBotoes.setPadding(new Insets(10, 0, 0, 0));
 
-        VBox painelPrincipal = new VBox(5, cartas, containerBotoes);
+        containerBotoes.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(containerBotoes, Priority.ALWAYS);
 
-        VBox.setVgrow(cartas, javafx.scene.layout.Priority.ALWAYS);
+        VBox painelPrincipal = new VBox(5);
+        painelPrincipal.setPadding(new Insets(10));
+
+        painelPrincipal.getChildren().addAll(cartas, containerBotoes);
+
+        VBox.setVgrow(cartas, Priority.ALWAYS);
+
+        painelPrincipal.setMaxWidth(Double.MAX_VALUE);
+        painelPrincipal.setMaxHeight(Double.MAX_VALUE);
 
         return painelPrincipal;
     }
