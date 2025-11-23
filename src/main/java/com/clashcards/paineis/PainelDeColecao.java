@@ -55,7 +55,7 @@ public class PainelDeColecao {
         Carta selecionada = cartas.getSelectionModel().getSelectedItem();
 
         if (selecionada == null) {
-            mostrarAlertaErro("Selecione uma carta", "Por favor, selecione uma carta para exluir.");
+            mostrarAlertaErro("Selecione uma carta", "Por favor, selecione uma carta para excluir.");
             return;
         }
 
