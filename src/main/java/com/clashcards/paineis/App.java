@@ -50,7 +50,7 @@ public class App extends Application {
         });
 
         Scene cenaPrincipal = new Scene(painelDeAbas, 900, 600);
-        java.net.URL cssUrl = getClass().getResource("/css/estilos.css");
+        java.net.URL cssUrl = getClass().getResource("/estilos.css");
 
         if (cssUrl != null) {
             cenaPrincipal.getStylesheets().add(cssUrl.toExternalForm());
