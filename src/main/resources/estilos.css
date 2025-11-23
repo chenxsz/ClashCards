@@ -1,0 +1,112 @@
+/* --- FUNDO GERAL (Dark Theme) --- */
+.root {
+    -fx-background-color: #2c3e50; /* Azul escuro quase cinza */
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* --- TEXTOS --- */
+.label {
+    -fx-text-fill: #ecf0f1; /* Branco gelo */
+}
+
+/* Titulos maiores */
+.titulo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1c40f; /* Dourado estilo Clash */
+}
+
+/* --- BOTÕES GERAIS --- */
+.button {
+    -fx-background-color: #3498db; /* Azul Clash */
+    -fx-text-fill: white;
+    -fx-background-radius: 8; /* Bordas arredondadas */
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 8 15 8 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #2980b9; /* Azul um pouco mais escuro */
+    -fx-scale-x: 1.05; /* Cresce um pouquinho */
+    -fx-scale-y: 1.05;
+}
+
+.button:pressed {
+    -fx-background-color: #1abc9c;
+    -fx-effect: innerShadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 2);
+}
+
+/* --- BOTÃO DE AÇÃO (SALVAR) --- */
+.botao-verde {
+    -fx-background-color: #2ecc71; /* Verde Sucesso */
+}
+.botao-verde:hover { -fx-background-color: #27ae60; }
+
+/* --- BOTÃO DE PERIGO (EXCLUIR/LIMPAR) --- */
+.botao-vermelho {
+    -fx-background-color: #e74c3c; /* Vermelho Perigo */
+}
+.botao-vermelho:hover { -fx-background-color: #c0392b; }
+
+/* --- CAMPOS DE TEXTO (Inputs) --- */
+.text-field, .combo-box {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #7f8c8d;
+    -fx-border-radius: 5;
+}
+
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #f1c40f; /* Borda dourada quando clica */
+    -fx-background-color: #3e5871;
+}
+
+/* --- TABELA (TableView) --- */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-base: #2c3e50; /* Cor base para as linhas */
+    -fx-control-inner-background: #2c3e50;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #2980b9;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #34495e; /* Linhas alternadas */
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #f1c40f; /* Seleção Dourada */
+    -fx-text-fill: black;
+}
+
+/* --- ABAS (TabPane) --- */
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #1a252f;
+}
+
+.tab {
+    -fx-background-color: #34495e;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.tab:selected {
+    -fx-background-color: #3498db; /* Aba ativa fica azul */
+}
+
+.tab .tab-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
