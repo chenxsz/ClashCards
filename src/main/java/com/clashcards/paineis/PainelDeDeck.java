@@ -266,39 +266,31 @@ public class PainelDeDeck {
         topContainer.setPadding(new Insets(5));
 
         ImageView imgView = new ImageView();
-        String caminhoRelativo = c.getImagem();
+        String caminhoAbsoluto = c.getImagem();
 
-        if (caminhoRelativo != null && !caminhoRelativo.isEmpty() && !caminhoRelativo.contains("Nenhuma imagem selecionada")) {
+        if (caminhoAbsoluto != null && !caminhoAbsoluto.isEmpty() && !caminhoAbsoluto.contains("Nenhuma imagem selecionada")) {
 
-            if (caminhoRelativo.contains(" copiada.")) {
-                System.err.println("AVISO: Caminho de imagem corrompido pelo feedback da UI. Ignorando.");
-                layoutCarta.setCenter(new Label("Caminho Inválido."));
-            } else {
-                try {
-                    Path pathBase = Paths.get(gerenciador.getDiretorioBase());
+            try {
+                File arquivoLocal = new File(caminhoAbsoluto);
 
-                    Path finalPath = pathBase.resolve(caminhoRelativo);
-                    File arquivoLocal = finalPath.toFile();
+                if (!arquivoLocal.exists()) {
+                    System.err.println("ERRO: Arquivo não encontrado. Caminho procurado: " + arquivoLocal.getAbsolutePath());
+                    layoutCarta.setCenter(new Label("Arquivo Não Existe."));
+                } else {
+                    String uriPath = arquivoLocal.toURI().toString();
+                    Image img = new Image(uriPath, 80, 80, true, true);
 
-                    if (!arquivoLocal.exists()) {
-                        System.err.println("ERRO: Arquivo não encontrado. Caminho procurado: " + arquivoLocal.getAbsolutePath());
-                        layoutCarta.setCenter(new Label("Arquivo Não Existe."));
+                    if (img.isError()) {
+                        System.err.println("ERRO INTERNO NA IMAGEM. Causa: " + img.exceptionProperty().get().getMessage());
+                        layoutCarta.setCenter(new Label("Erro de Leitura."));
                     } else {
-                        String uriPath = arquivoLocal.toURI().toString();
-                        Image img = new Image(uriPath, 80, 80, true, true);
-
-                        if (img.isError()) {
-                            System.err.println("ERRO INTERNO NA IMAGEM. Causa: " + img.exceptionProperty().get().getMessage());
-                            layoutCarta.setCenter(new Label("Erro de Leitura."));
-                        } else {
-                            imgView.setImage(img);
-                            layoutCarta.setCenter(imgView);
-                        }
+                        imgView.setImage(img);
+                        layoutCarta.setCenter(imgView);
                     }
-                } catch (Exception e) {
-                    System.err.println("EXCEÇÃO FATAL AO CARREGAR: " + e.getMessage());
-                    layoutCarta.setCenter(new Label("Erro fatal."));
                 }
+            } catch (Exception e) {
+                System.err.println("EXCEÇÃO FATAL AO CARREGAR: " + e.getMessage());
+                layoutCarta.setCenter(new Label("Erro fatal."));
             }
         } else {
             layoutCarta.setCenter(new Label("(Sem img)"));

@@ -128,33 +128,14 @@ public class PainelDeCadastro {
         java.io.File arquivoSelecionado = seletor.showOpenDialog(null);
 
         if (arquivoSelecionado != null) {
-            String nomeDoArquivo = arquivoSelecionado.getName();
-            final String PASTA_DESTINO_RELATIVA = "imagens_cartas";
-            java.io.File pastaDestino = new java.io.File(PASTA_DESTINO_RELATIVA);
+            this.imagemPath = arquivoSelecionado.getAbsolutePath();
+            caminhoDaImagem.setText(arquivoSelecionado.getName());
 
-            if (!pastaDestino.exists()) {
-                pastaDestino.mkdirs();
-            }
-            java.io.File arquivoDestino = new java.io.File(pastaDestino, nomeDoArquivo);
-
-            try {
-                Files.copy(
-                        arquivoSelecionado.toPath(),
-                        arquivoDestino.toPath(),
-                        StandardCopyOption.REPLACE_EXISTING // Substitui se já existir
-                );
-                this.imagemPath = PASTA_DESTINO_RELATIVA + "/" + nomeDoArquivo;
-                caminhoDaImagem.setText(nomeDoArquivo + " copiada.");
-
-                System.out.println("Imagem copiada com sucesso para: " + this.imagemPath);
-
-            } catch (IOException e) {
-                System.err.println("Erro ao copiar imagem para pasta do projeto: " + e.getMessage());
-                caminhoDaImagem.setText("ERRO: Falha na cópia do arquivo.");
-            }
+            System.out.println("Imagem selecionada diretamente de: " + this.imagemPath);
 
         } else {
             caminhoDaImagem.setText("Nenhuma imagem selecionada");
+            this.imagemPath = null;
         }
     }
 
@@ -165,13 +146,13 @@ public class PainelDeCadastro {
             int elixir = Integer.parseInt(this.elixir.getText().trim());
             TipoDaCarta tipo = this.tipo.getValue();
             Raridade raridade = this.raridade.getValue();
-            String imagem = caminhoDaImagem.getText();
+            String imagem = this.imagemPath; // Usa o caminho ABSOLUTO/limpo
             int dano = Integer.parseInt(this.dano.getText().trim());
             double dps = Double.parseDouble(this.danosPorSegundo.getText().trim());
             int vida = Integer.parseInt(this.vida.getText().trim());
 
-            if (nome.isEmpty() || tipo == null || raridade == null) {
-                mostrarAlertaErro("Os campos obrigatórios (Nome, Tipo, Raridade) não podem estar vazios!");
+            if (nome.isEmpty() || tipo == null || raridade == null || imagem == null) {
+                mostrarAlertaErro("Os campos obrigatórios (Nome, Tipo, Raridade, Imagem) não podem estar vazios!");
                 return null;
             }
 
@@ -230,7 +211,7 @@ public class PainelDeCadastro {
             int elixir = Integer.parseInt(this.elixir.getText().trim());
             TipoDaCarta tipo = this.tipo.getValue();
             Raridade raridade = this.raridade.getValue();
-            String imagem = caminhoDaImagem.getText();
+            String imagem = this.imagemPath; // Usa o caminho ABSOLUTO/limpo
             int dano = Integer.parseInt(this.dano.getText().trim());
             double dps = Double.parseDouble(this.danosPorSegundo.getText().trim());
             int vida = Integer.parseInt(this.vida.getText().trim());
@@ -238,7 +219,7 @@ public class PainelDeCadastro {
             String velocidade = this.velocidade.getText().trim();
             String velImpacto = this.velocidadeImpacto.getText().trim();
 
-            if (nome.isEmpty() || tipo == null || raridade == null || imagem.equals("Nenhuma imagem selecionada.")) {
+            if (nome.isEmpty() || tipo == null || raridade == null || imagem == null) { // Checagem para imagemPath == null
                 mostrarAlertaErro("Campos obrigatórios (Nome, Tipo, Raridade, Imagem) não podem estar vazios!");
                 return;
             }
@@ -298,7 +279,7 @@ public class PainelDeCadastro {
         danosPorSegundo.setText(String.valueOf(carta.getDanoPorSegundo()));
         alvos.setText(carta.getAlvos());
         alcance.setText(carta.getAlcance());
-        velocidade.setText(carta.getVelocidade());
+        velocidade.setText(String.valueOf(carta.getVelocidade()));
         velocidadeImpacto.setText(String.valueOf(carta.getVelocidadeDeImpacto()));
 
         nome.setDisable(true);

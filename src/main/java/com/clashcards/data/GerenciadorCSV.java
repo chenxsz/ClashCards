@@ -16,7 +16,6 @@ public class GerenciadorCSV {
     public static final String NOME_ARQUIVO = "cartas.csv";
     public static final String ARQUIVO_DECKS = "decks.csv";
     private ArrayList<Carta> cartasEmMemoria;
-// ...
 
     public GerenciadorCSV() {
         this.cartasEmMemoria = new ArrayList<>();
@@ -46,8 +45,25 @@ public class GerenciadorCSV {
         } catch (IOException e) {
             System.err.println("Erro ao salvar a carta no arquivo CSV!");
             e.printStackTrace();
-            //se deu erro ao salvar no arquivo, remove da memória também
             this.cartasEmMemoria.remove(novaCarta);
+            return false;
+        }
+    }
+
+    public boolean salvarTodasAsCartas() {
+        try (FileWriter fw = new FileWriter(NOME_ARQUIVO, false);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+
+            for (Carta c : cartasEmMemoria) {
+                out.println(formatarParaCSV(c));
+            }
+            System.out.println("Todas as cartas em memória salvas no arquivo CSV.");
+            return true;
+
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar todas as cartas no arquivo CSV!");
+            e.printStackTrace();
             return false;
         }
     }
@@ -56,7 +72,16 @@ public class GerenciadorCSV {
         File arquivo = new File(NOME_ARQUIVO);
 
         if (!arquivo.exists()) {
-            System.out.println("Arquivo 'cartas.csv' não encontrado. Será criado no primeiro save.");
+            System.out.println("Arquivo 'cartas.csv' não encontrado. Criando arquivo vazio.");
+            try {
+                if (arquivo.createNewFile()) {
+                    System.out.println("Arquivo criado com sucesso: " + arquivo.getAbsolutePath());
+                } else {
+                    System.out.println("Não foi possível criar o arquivo.");
+                }
+            } catch (IOException e) {
+                System.err.println("Erro ao tentar criar o arquivo: " + e.getMessage());
+            }
             return;
         }
 
@@ -124,24 +149,9 @@ public class GerenciadorCSV {
         return cartasEmMemoria;
     }
 
-    private boolean reescreverArquivoCSV() {
-        try (FileWriter fw = new FileWriter(NOME_ARQUIVO, false);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)) {
-            for (Carta c : cartasEmMemoria) {
-                out.println(formatarParaCSV(c));
-            }
-            return true;
-        } catch (IOException e) {
-            System.out.println("Erro ao reescrever o arquivo CSV!");
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public boolean removerCarta(Carta removerCarta) {
         if (cartasEmMemoria.removeIf(c -> c.getNome().equalsIgnoreCase(removerCarta.getNome()))) {
-            if (reescreverArquivoCSV()) {
+            if (salvarTodasAsCartas()) {
                 return true;
             } else {
                 System.out.println("ERRO GRAVE: Falha ao reescrever CSV após a remoção!");
@@ -153,8 +163,8 @@ public class GerenciadorCSV {
 
     private Carta lerDoCSV(String linha) {
         String[] partes = linha.split(";");
-        if (partes.length < 12) {
-            System.err.println("Erro: Linha CSV incompleta (esperado 12 campos): " + linha);
+        if (partes.length < 13) {
+            System.err.println("Erro: Linha CSV incompleta (esperado 13 campos): " + linha);
             return null;
         }
 
@@ -221,19 +231,25 @@ public class GerenciadorCSV {
         try (BufferedReader br = new BufferedReader(new FileReader(ARQUIVO_DECKS))) {
             String linha;
             while ((linha = br.readLine()) != null) {
+
+                if (linha.trim().isEmpty()) {
+                    continue;
+                }
+
                 String[] partes = linha.split(";");
 
-                if (partes.length == 9) { // 1 nome do deck + 8 nomes de cartas
+                if (partes.length == 9) {
+
                     String nomeDeck = partes[0];
                     List<String> nomesCartas = new ArrayList<>();
 
-                    // Adiciona os 8 nomes de cartas (começando do índice 1)
                     for (int i = 1; i < partes.length; i++) {
                         nomesCartas.add(partes[i]);
                     }
                     decksSalvos.put(nomeDeck, nomesCartas);
+
                 } else {
-                    System.err.println("Linha inválida no decks.csv: " + linha);
+                    System.err.println("Linha inválida no decks.csv (esperado 9 campos): " + linha);
                 }
             }
         } catch (IOException e) {
@@ -243,5 +259,4 @@ public class GerenciadorCSV {
 
         return decksSalvos;
     }
-
 }
