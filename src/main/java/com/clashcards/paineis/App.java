@@ -1,5 +1,7 @@
 package com.clashcards.paineis;
 
+//Grupo: Fernanda Chen e Júlio César Dias Garcia
+
 import com.clashcards.data.GerenciadorCSV;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -49,7 +51,7 @@ public class App extends Application {
             }
         });
 
-        Scene cenaPrincipal = new Scene(painelDeAbas, 900, 600);
+        Scene cenaPrincipal = new Scene(painelDeAbas, 1200, 900);
         java.net.URL cssUrl = getClass().getResource("/css/estilos.css");
 
         if (cssUrl != null) {
