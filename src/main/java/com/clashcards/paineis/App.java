@@ -56,8 +56,6 @@ public class App extends Application {
             cenaPrincipal.getStylesheets().add(cssUrl.toExternalForm());
         }
 
-        primaryStage.setMaximized(true);
-
         primaryStage.setScene(cenaPrincipal);
         primaryStage.show();
     }
