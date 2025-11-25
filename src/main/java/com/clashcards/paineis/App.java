@@ -51,7 +51,7 @@ public class App extends Application {
             }
         });
 
-        Scene cenaPrincipal = new Scene(painelDeAbas, 1200, 900);
+        Scene cenaPrincipal = new Scene(painelDeAbas, 1200, 800);
         java.net.URL cssUrl = getClass().getResource("/css/estilos.css");
 
         if (cssUrl != null) {
